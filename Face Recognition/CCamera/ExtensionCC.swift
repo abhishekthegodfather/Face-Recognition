@@ -23,16 +23,16 @@ extension CustomCamera {
                     Constants.makeAlert(controller: self, msg: "No Face Found", title: "Alert!!")
                 }
             }else if(result == 1){
-                self.prepareForImageProcessing(imageData: lastFreshImage)
+                self.prepareForImageProcessing(imageData: lastFreshImage, employeeModel: employeeModel)
             }
         }
     }
     
     
-    func prepareForImageProcessing(imageData: Data){
+    func prepareForImageProcessing(imageData: Data, employeeModel: EmployeeModel){
         guard let tempImageData = UIImage(data: imageData)?.rotated(by: -360).pngData() else {return}
         guard let processedResImage = ImageProcessing.shared.startPreprocessingImage(imageData: tempImageData, controller: self) else {return}
-        Recognition.shared.isFaceSimilarOrNot(testImage: processedResImage, trainImage: UIImage(named: "abs") ?? UIImage()) { result in
+        Recognition.shared.isFaceSimilarOrNot(testImage: processedResImage, trainImage: UIImage(data: employeeModel.imageData ?? Data()) ?? UIImage()) { result in
             if result {
                 DispatchQueue.main.async {
                     self.laodingIndicator.stopAnimating()
